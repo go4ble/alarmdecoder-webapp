@@ -180,7 +180,8 @@ def alarmdecoder():
         'panel_on_battery': current_app.decoder.device._battery_status[0],
         'panel_panicked': current_app.decoder.device._panic_status,
         'panel_relay_status': relay_status,
-        'panel_zones_faulted': faulted_zones
+        'panel_zones_faulted': faulted_zones,
+        'panel_chime_on': current_app.decoder.device._chime_status
     }
 
     return jsonify(ret), OK
@@ -335,7 +336,7 @@ def zones():
             return jsonify(build_error(ERROR_RECORD_ALREADY_EXISTS, 'Zone already exists.')), CONFLICT
 
         zone = Zone(zone_id=zone_id, name=name, description=description)
-        
+
         db.session.add(zone)
         db.session.commit()
 
@@ -881,7 +882,7 @@ def system_reboot():
         return jsonify(build_error(ERROR_NOT_AUTHORIZED, "Insufficient privileges for request.")), UNAUTHORIZED
 
     sh.reboot()
-    
+
     return jsonify(), ACCEPTED
 
 @api.route('/system/shutdown', methods=['POST'])
@@ -892,5 +893,5 @@ def system_shutdown():
         return jsonify(build_error(ERROR_NOT_AUTHORIZED, "Insufficient privileges for request.")), UNAUTHORIZED
 
     sh.shutdown()
-    
+
     return jsonify(), ACCEPTED
